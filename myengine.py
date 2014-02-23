@@ -1,5 +1,4 @@
-#this program reads one html file (URL predefined),
-#extracts the words from the text content of the file,
+k#extracts the words from the text content of the file,
 #converts the words into lower case, 
 #writes out the words to an output file.
 
