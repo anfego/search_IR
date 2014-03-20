@@ -107,6 +107,8 @@ def SeperateWords(text,stopwords,docID):
                 if not s in stopwords:
                     if not s in docDict:
                         #if new term, add freq as [0] and add the pos in +[1]
+                        if s == "of":
+                            print "hey"
                         docDict[s] = []
                         docDict[s] = [docID]
                         docDict[s].append(1) 
@@ -144,8 +146,6 @@ def loadStopWords(stopFile):
     for line in stopFile:
         stopwords.append(line.rstrip())
 
-    pass
-
 if __name__ == '__main__':
         
     outfile = open("posIndex.dat", "w")
@@ -153,8 +153,9 @@ if __name__ == '__main__':
     
     pages = ['http://www.mtsu.edu/~csdept/index.htm']
     stopwordsFile = open('stopwords','r')
+    loadStopWords(stopwordsFile)
     stopwordsFile.close()
-
+    
     crawl(pages, outfile, docfile, stopwords, 0)
 
     pickle.dump(invIndex,outfile)
