@@ -30,7 +30,7 @@ def crawl(pages, outfile, docfile, stopwords, depth):
             page = urljoin(page,"index.html")
             try:
                 print "RETRYING.... %s\n" % page
-                page = urllib2.urlopen(page)
+                c = urllib2.urlopen(page)
             except:
                 print "could not open the %s" % page
                 return 0
@@ -44,6 +44,7 @@ def crawl(pages, outfile, docfile, stopwords, depth):
             return 0
 
         soup = BeautifulSoup(c.read())
+        # soup = soup.getText();
 
         #call code here to remove the html tags from the html file 
         #resulting in Unicode u'Hello'
@@ -118,7 +119,7 @@ def SeperateWords(text,stopwords,docID):
                         # increment the freq [0] and append the pos
                         docDict[s][1] += 1
                         docDict[s].append(wordPos) 
-            wordPos += 1
+            wordPos = wordPos + 1
 
     # getting both the keys and values at once
     for term,value in docDict.items():
