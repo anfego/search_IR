@@ -1,4 +1,9 @@
+# Andres Felipe Gomez
+# Not Finished! :(
+# 03/28/2014
 import pickle
+import math
+
 
 
 def posIntersect(termList_X,termList_Y,k):
@@ -7,6 +12,7 @@ def posIntersect(termList_X,termList_Y,k):
  	intersection = [];
 
 	while a < len(termList_X) and b < len(termList_Y):
+	
 		if len(termList_X[a]) < len(termList_Y[b]):
 			posArray_A = termList_Y[b]
 			posArray_B = termList_X[a]
@@ -30,13 +36,9 @@ def posIntersect(termList_X,termList_Y,k):
 
 
 def posIntersectFind(posArray_A,posArray_B,k):
-
-
-
-	a = 1;
-	b = 1;
-	i = 1;
-	j = 1;
+	
+	i = 2;
+	j = 2;
 	intersection = [];
 	while i < len(posArray_A):
 		# print (posArray_A);
@@ -95,13 +97,67 @@ def posIntersectArray(termArray_A,termArray_B,k):
 			b += 1;
 	return (intersection);
 
+def tfIdf(termList, N, queryDocs):
+	
+	df = termList[0]
+	idf = 0.0
+	idf = N/float(df)
+	idf = math.log(idf);
+	tfIdf = {}
+	print("tfIdf : %d * %f" % (df, idf))
+	i = 1
+	while i < len (termList):
+		if termList[i][0] in queryDocs:
+			tfIdf[termList[i][0]] = termList[i][1]*float(idf)
+		i += 1
+
+	return tfIdf
+
+def euclidianNormalized(tfIdfArrayDic, termsDoc):
+	# print tfIdfArrayDic
+	magnitude = []
+	normalizedArray = []
+	for doc in termsDoc:
+		result = 0
+		for term in tfIdfArrayDic:
+			result += math.pow(float(term[doc]),2)
+		magnitude.append(math.sqrt(result))
+	del normalizedArray[:]
+	for term in tfIdfArrayDic:
+		normalized = {}
+		i = 0
+		# print "term"
+		for key,value in term.iteritems():
+			normalized[key] = float(value) / float(magnitude[i])
+
+		normalizedArray.append(normalized);
+		
+		# print normalized
+	
+	# print "magnitude"
+	# print magnitude
+
+	return magnitude
+			
+
 
 if __name__ == '__main__':
 	# Loads the posting Index
-	index = open("posIndex.dat", "rb");
-	posIndex = pickle.load(index);
+	indexFile = open("posIndex.dat", "rb");
+	# docsFile = "docs.txt";
+	
+	docsFile = open("docs.txt")
+	data = docsFile.readlines()
+	docsFile.close()
 
+	docsList =[]
+	for n, line in enumerate(data, 1):
+		docsList.append(line.rstrip());
+		# print '{:2}.'.format(n), line.rstrip()
 
+	posIndex = pickle.load(indexFile);
+	indexFile.close();
+	docsFile.close();
 	query =  "state middle university"
 	# query = raw_input('Please enter your query: ');
 
@@ -121,38 +177,62 @@ if __name__ == '__main__':
 	
 	for term in queryTerms:
 		if term in posIndex.keys():
-			ternInDoc = []
+			termInDoc = []
 			# print "%s -->\t %s\n" % (term, posIndex[term]);
 			for docId  in posIndex[term]:
-				ternInDoc.append(docId);
+				termInDoc.append(docId);
 				# print (docId);
-			termIndex.append(ternInDoc);
+			termIndex.append(termInDoc);
 			i = i +1;
 		# else:
 		# 	print "%s -->\n" % (term);
 		
 	# for term in termIndex:
 	# 	print term
+	M = 0
+	while M < 10:
+		l1 = posIntersect(termIndex[0],termIndex[1],k);
 
-	l1 = posIntersect(termIndex[0],termIndex[1],k);
+		# print l1
+		
+		l2 = posIntersect(termIndex[0],termIndex[2],k);
+		# print l2
+		l3 = posIntersect(termIndex[1],termIndex[2],k);
+		# print l3
+		l12 = posIntersectArray(l1,l2,k);
+		# print l12
+		# find intersection l1 and l2 = l12
+		l123 = posIntersectArray(l12,l3,k);
+		print l123
+		M = len(l123);
+		tfIdfArray = [];
+		if ( M>=10 ):
+			# print "Compute"
+			
+			for termList in termIndex:
+				# print termList
+				tfIdfArray.append(tfIdf(termList, len(docsList), l123));
 
-	print l1
+			print tfIdfArray
+			euclidianNormalized(tfIdfArray, l123);
+
+			# compute scores
+			#Compute scores using qqq.ddd = ltn.ltc 
+		else:
+			# print "Increase"
+			k *= 0.5;
+	print "# Andres Felipe Gomez \nNot Finished! \n03/28/2014"
+
+
 	
-	l2 = posIntersect(termIndex[0],termIndex[2],k);
-	print l2
-	l3 = posIntersect(termIndex[1],termIndex[2],k);
-	print l3
-	l12 = posIntersectArray(l1,l2,k);
-	print l12
-	# find intersection l1 and l2 = l12
-	# l = posIntersectArray(l12,l3,k);
+	print "out"	
+
 	# find intersection l12 and l3 
 	
 	#if size of l123 > 10 compute score
 
 	#else k= 1.5k and repeat
 
-	#Compute scores using qqq.ddd = ltn.ltc 
 
 	#Show results decreasing order of ranking, Ranking - URL
 
